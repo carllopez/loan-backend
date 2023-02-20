@@ -70,4 +70,4 @@ class TestOperations(TestCase):
 
     def test_random_string(self):
         res = random_string()
-        self.assertEqual(res, "")
+        self.assertEqual(type(res), str)

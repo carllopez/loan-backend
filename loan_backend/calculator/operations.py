@@ -1,4 +1,5 @@
 from math import sqrt
+from .random_string import generate_random_string
 
 
 def addition(a, b):
@@ -31,4 +32,4 @@ def square_root(a):
         return None, str(e)
 
 def random_string():
-    return ""
+    return generate_random_string()
