@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,8 +12,11 @@ class RecordList(generics.ListCreateAPIView):
     """
     List all `Record` objects, for a given user
     """
+    permission_classes = [IsAuthenticated,]
+
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
+
 
     def list(self, request, pk=None):
         queryset = self.get_queryset().filter(user=pk)
@@ -25,6 +29,8 @@ class OperationRequest(APIView):
     Choose an operation and return the right response,
     if parameters are well formed and operation is valid.
     """
+    permission_classes = [IsAuthenticated,]
+
 
     def post(self, request, format=None):
         operation = request.data.get('operation', None)

@@ -33,21 +33,15 @@ For practical purposes, this project is bundled to a sqlite lightweight database
 configured in the `settings.py` file.
     
 
-### Install NVM, NPM, and Node
-Follow the installation instructions at https://github.com/creationix/nvm, then:
-
-    nvm install 16.14.0
-
-### Set up frontend development environment
-Ensure you are using the version of Node installed by `nvm` (you can verify
-this by running`nvm current`). Then:
-
-    cd webapp/
-    npm install
-    cd ..
-
 ### Run development servers
 You'll need to start a server to host the backend that serves the API.
 
     python manage.py runserver
 
+### Admin site
+To have better and easier control, an admin site is bundled and can be accessed
+by going to (assuming you are running default Django port locally):
+
+```http://localhost:8000/admin```
+
+and log in using ```admin``` & ```truenorth``` for username and password, respectively.
