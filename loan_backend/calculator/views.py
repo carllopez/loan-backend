@@ -42,7 +42,7 @@ class OperationRequest(APIView):
             serializer = EnmptySerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serilizer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         match operation:
             case 1:

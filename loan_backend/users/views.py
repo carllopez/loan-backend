@@ -26,7 +26,6 @@ class SigninRequest(APIView):
         if not authenticated_user:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_403_FORBIDDEN)
 
-
         login(request, authenticated_user)
 
         token, created_bool = Token.objects.get_or_create(user=authenticated_user)
