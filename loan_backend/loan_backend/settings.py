@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8(1pyr%)*4edcqx5^8nys7#&yc19m!1@vukmlzkya!07*css2x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['truenorth-carlos-backend.herokuapp.com']
+ALLOWED_HOSTS = ['truenorth-carlos-backend.herokuapp.com', 'localhost']
 
 
 
@@ -63,7 +63,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://truenorth-carlos-frontend.herokuapp.com'
 ]
 
 ROOT_URLCONF = 'loan_backend.urls'
