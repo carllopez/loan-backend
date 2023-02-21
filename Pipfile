@@ -9,6 +9,9 @@ djangorestframework = "*"
 django-cors-headers = "*"
 requests = "*"
 drf-yasg = "*"
+zappa = "*"
+gunicorn = "*"
+whitenoise = "*"
 
 [dev-packages]
 
