@@ -28,5 +28,9 @@ class Record(models.Model):
     operation_response = models.CharField(max_length=128)
     date = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def friendly_date(self):
+        return self.date.date()
+
     def __str__(self):
-        return f"{self.operation} for {self.user} on {self.date}"
+        return f"{self.operation} - {self.user} - {self.date.date()}"

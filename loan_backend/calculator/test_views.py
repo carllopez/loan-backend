@@ -2,8 +2,11 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from .models import Operation, Record
 from .views import RecordList, OperationRequest
+
+from users.models import UserBalance
 
 
 class TestRecordListView(TestCase):
@@ -11,8 +14,6 @@ class TestRecordListView(TestCase):
     Test `RecordList` endpoint
     """
     def setUp(self):
-        # API Client
-        self.client = APIClient()
         # Set up operations
         op1 = Operation.objects.create(type=1, cost=5)
         op2 = Operation.objects.create(type=2, cost=5)
@@ -24,6 +25,11 @@ class TestRecordListView(TestCase):
             email='other_tester@island.com',
             password='other_glasser'
         )
+
+        # API Client
+        self.client = APIClient()
+        token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
 
         # Set up some records
         Record.objects.create(
@@ -80,43 +86,92 @@ class TestOperationRequestView(TestCase):
     Test `OperationRequest` endpoint
     """
     def setUp(self):
+        # User setup
+        self.user = User.objects.create(username='bronson', password='underground')
+        token = Token.objects.create(user=self.user)
+
         # API Client
         self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
+
+        # Setup operations
+        for i in range(1,7):
+            Operation.objects.create(
+                type=i,
+                cost=1,
+            )
 
     def test_addition_operation(self):
         """
         Operation sent is addition and expected result
         matches it
         """
-        pass
+        body = {'operation': 1, 'operand_a': 5, 'operand_b': 5}
+        response = self.client.post('/calculator/operation/', body, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['result'], 10)
+
+        self.assertEqual(Record.objects.count(), 1)
+
+        user_balance = UserBalance.objects.get(user=self.user)
+        self.assertEqual(user_balance.balance, 499)
 
     def test_subtract_operation(self):
         """
         Operation sent is subtract and expected result
         matches it
         """
-        pass
+        body = {'operation': 2, 'operand_a': 200, 'operand_b': 133}
+        response = self.client.post('/calculator/operation/', body, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['result'], 67)
+
+        user_balance = UserBalance.objects.get(user=self.user)
+        self.assertEqual(user_balance.balance, 499)
 
     def test_multiplication_operation(self):
         """
         Operation sent is multiplication and expected result
         matches it
         """
-        pass
+        body = {'operation': 3, 'operand_a': 5, 'operand_b': 5}
+        response = self.client.post('/calculator/operation/', body, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['result'], 25)
+
+        user_balance = UserBalance.objects.get(user=self.user)
+        self.assertEqual(user_balance.balance, 499)
 
     def test_division_operation(self):
         """
         Operation sent is division and expected result
         matches it
         """
-        pass
+        body = {'operation': 4, 'operand_a': 500, 'operand_b': 100}
+        response = self.client.post('/calculator/operation/', body, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['result'], 5)
+
+        user_balance = UserBalance.objects.get(user=self.user)
+        self.assertEqual(user_balance.balance, 499)
 
     def test_square_root_operation(self):
         """
         Operation sent is square root and expected result
         matches it
         """
-        pass
+        body = {'operation': 5, 'operand_a': 81}
+        response = self.client.post('/calculator/operation/', body, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['result'], 9)
+
+        user_balance = UserBalance.objects.get(user=self.user)
+        self.assertEqual(user_balance.balance, 499)
 
     def test_random_string_operation(self):
         """
@@ -124,7 +179,14 @@ class TestOperationRequestView(TestCase):
         matches it. Special case as any operation outside
         defined values will be treated like this.
         """
-        pass
+        body = {'operation': 6}
+        response = self.client.post('/calculator/operation/', body, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(type(response.data['result']), str)
+
+        user_balance = UserBalance.objects.get(user=self.user)
+        self.assertEqual(user_balance.balance, 499)
 
     def test_no_operation_should_fail(self):
         """
